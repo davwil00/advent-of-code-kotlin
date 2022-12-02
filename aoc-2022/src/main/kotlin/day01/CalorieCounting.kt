@@ -7,24 +7,19 @@ class CalorieCounting(input: String) {
     private val elves = input
         .split("\n\n")
         .map { elf ->
-            Elf(elf
-                .split("\n")
-                .map { cals -> cals.toInt() })
+            elf
+                .lines()
+                .sumOf { cals -> cals.toInt() }
         }
 
-
-    data class Elf(private val calories: List<Int>) {
-        fun totalCalories() = calories.sum()
-    }
-
     fun findTotalCaloriesForElfWithMaxCalories(): Int {
-        return elves.maxBy { it.totalCalories() }.totalCalories()
+        return elves.max()
     }
 
     fun findTotalCaloriesForTop3Elves(): Int {
-        return elves.sortedByDescending { it.totalCalories() }
+        return elves.sortedDescending()
             .take(3)
-            .sumOf { it.totalCalories() }
+            .sum()
     }
 }
 

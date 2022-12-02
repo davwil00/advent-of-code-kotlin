@@ -2,6 +2,7 @@ package day01
 
 import org.junit.jupiter.api.Test
 import org.assertj.core.api.Assertions.assertThat
+import utils.readInput
 
 class CalorieCountingTest {
     private val testInput = """1000
@@ -31,5 +32,17 @@ class CalorieCountingTest {
     fun `should find total calories for top 3 elves with most calories`() {
         assertThat(testSubject.findTotalCaloriesForTop3Elves())
             .isEqualTo(45000)
+    }
+
+    @Test
+    fun `should get correct answer for part 1`() {
+        assertThat(CalorieCounting(readInput(1)).findTotalCaloriesForElfWithMaxCalories())
+            .isEqualTo(67450)
+    }
+
+    @Test
+    fun `should get correct answer for part 2`() {
+        assertThat(CalorieCounting(readInput(1)).findTotalCaloriesForTop3Elves())
+            .isEqualTo(199357)
     }
 }
