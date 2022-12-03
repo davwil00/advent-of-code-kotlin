@@ -20,7 +20,7 @@ printf "package day%s
 
 import utils.readInputLines
 
-class %s(private val input: List<String>) {
+class %s(input: List<String>) {
 }
 
 fun main() {
@@ -28,7 +28,7 @@ fun main() {
   //println(%s.part1())
   //println(%s.part2())
 }
-" "$day" "$name" "${name,}" "$name" "$day" "$name" "$name" > "aoc-${year}/src/main/kotlin/day$day/$name.kt"
+" "$day" "$name" "${name,}" "$name" "$day" "${name,}" "${name,}" > "aoc-${year}/src/main/kotlin/day$day/$name.kt"
 printf "package day%s
 
 import org.assertj.core.api.Assertions.assertThat
@@ -45,14 +45,15 @@ class %sTest {
 
     @Test
     fun \`should get correct answer for part 1\`() {
-        // assertThat(%s(readInputLines(%s)).part1()
+        // assertThat(%s(readInputLines(%s)).part1())
         //    .isEqualTo()
     }
 
     @Test
     fun \`should get correct answer for part 2\`() {
-        // assertThat(%s(readInputLines(%s)).part2()
+        // assertThat(%s(readInputLines(%s)).part2())
         //    .isEqualTo()
     }
 }
-" "$day" "$name" "$name" "$name" "$day", "$name", "$day" > "aoc-${year}/src/test/kotlin/day$day/${name}Test.kt"
+" "$day" "$name" "$name" "$name" "$inputDay" "$name", "$inputDay" > "aoc-${year}/src/test/kotlin/day$day/${name}Test.kt"
+git add .
