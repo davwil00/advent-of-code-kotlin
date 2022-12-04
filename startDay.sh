@@ -24,9 +24,9 @@ class %s(input: List<String>) {
 }
 
 fun main() {
-  val %s = %s(readInputLines(%d))
-  //println(%s.part1())
-  //println(%s.part2())
+    val %s = %s(readInputLines(%d))
+    //println(%s.part1())
+    //println(%s.part2())
 }
 " "$day" "$name" "${name,}" "$name" "$day" "${name,}" "${name,}" > "aoc-${year}/src/main/kotlin/day$day/$name.kt"
 printf "package day%s
@@ -55,5 +55,5 @@ class %sTest {
         //    .isEqualTo()
     }
 }
-" "$day" "$name" "$name" "$name" "$inputDay" "$name", "$inputDay" > "aoc-${year}/src/test/kotlin/day$day/${name}Test.kt"
+" "$day" "$name" "$name" "$name" "$inputDay" "$name" "$inputDay" > "aoc-${year}/src/test/kotlin/day$day/${name}Test.kt"
 git add .
