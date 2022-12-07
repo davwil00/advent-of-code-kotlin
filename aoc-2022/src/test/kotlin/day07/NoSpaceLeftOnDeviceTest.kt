@@ -38,6 +38,12 @@ class NoSpaceLeftOnDeviceTest {
     }
 
     @Test
+    fun `should find folder to delete`() {
+        assertThat(testSubject.part2())
+            .isEqualTo(24933642)
+    }
+
+    @Test
     fun `should get correct answer for part 1`() {
         // assertThat(NoSpaceLeftOnDevice(readInputLines(7)).part1())
         //    .isEqualTo()

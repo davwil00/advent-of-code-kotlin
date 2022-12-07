@@ -4,6 +4,11 @@ import utils.readInputLines
 
 class NoSpaceLeftOnDevice(private val input: List<String>) {
 
+    companion object {
+        const val TOTAL_SPACE_AVAILABLE = 70000000
+        const val FREE_SPACE_REQUIRED = 30000000
+    }
+
     private fun parseInput(): Folder {
         val iterator = input.drop(1).iterator()
         val rootFolder = Folder(null, "/")
@@ -39,6 +44,14 @@ class NoSpaceLeftOnDevice(private val input: List<String>) {
         return findDirsWithSizeAtMost100000(rootFolder)
     }
 
+    fun part2(): Long {
+        val rootFolder = parseInput()
+        val freeSpace = TOTAL_SPACE_AVAILABLE - rootFolder.size()
+        val additionalSpaceRequired = FREE_SPACE_REQUIRED - freeSpace
+        val dirSizes = getDirSizes(rootFolder).sorted()
+        return dirSizes.first { it >= additionalSpaceRequired }
+    }
+
     private fun findDirsWithSizeAtMost100000(currentFolder: Folder): Long {
         val folderSize = if (currentFolder.size() <= 100000) {
             currentFolder.size()
@@ -46,9 +59,15 @@ class NoSpaceLeftOnDevice(private val input: List<String>) {
             0
         }
 
-        return folderSize + currentFolder.contents
-            .filterIsInstance<Folder>()
+        return folderSize + currentFolder
+            .folders()
             .sumOf { findDirsWithSizeAtMost100000(it) }
+    }
+
+    private fun getDirSizes(currentFolder: Folder): List<Long> {
+        return currentFolder.folders()
+            .flatMap { getDirSizes(it)}
+            .toMutableList() + currentFolder.size()
     }
 
     interface Item {
@@ -56,6 +75,8 @@ class NoSpaceLeftOnDevice(private val input: List<String>) {
     }
     data class Folder(val parent: Folder?, val name: String, val contents: MutableList<Item> = mutableListOf()): Item {
         override fun size() = contents.sumOf { it.size() }
+        fun folders() = contents.filterIsInstance<Folder>()
+        fun files() = contents.filterIsInstance<File>()
     }
     data class File(val name: String, val size: Long): Item {
         override fun size() = size
@@ -65,5 +86,5 @@ class NoSpaceLeftOnDevice(private val input: List<String>) {
 fun main() {
     val noSpaceLeftOnDevice = NoSpaceLeftOnDevice(readInputLines(7))
     println(noSpaceLeftOnDevice.part1())
-    //println(noSpaceLeftOnDevice.part2())
+    println(noSpaceLeftOnDevice.part2())
 }
