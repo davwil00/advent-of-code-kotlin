@@ -2,6 +2,7 @@ package day07
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import utils.readInputLines
 
 class NoSpaceLeftOnDeviceTest {
     private val testInput = """
@@ -33,25 +34,26 @@ class NoSpaceLeftOnDeviceTest {
     private val testSubject = NoSpaceLeftOnDevice(testInput)
 
     @Test
-    fun `should find total space for files greater than 100000`() {
-        testSubject.part1()
+    fun `should find total space for files greater than or equal to 100000`() {
+        assertThat(testSubject.part1())
+            .isEqualTo(95437)
     }
 
     @Test
-    fun `should find folder to delete`() {
+    fun `should find size of folders to delete`() {
         assertThat(testSubject.part2())
             .isEqualTo(24933642)
     }
 
     @Test
     fun `should get correct answer for part 1`() {
-        // assertThat(NoSpaceLeftOnDevice(readInputLines(7)).part1())
-        //    .isEqualTo()
+         assertThat(NoSpaceLeftOnDevice(readInputLines(7)).part1())
+            .isEqualTo(1642503)
     }
 
     @Test
     fun `should get correct answer for part 2`() {
-        // assertThat(NoSpaceLeftOnDevice(readInputLines(7)).part2())
-        //    .isEqualTo()
+         assertThat(NoSpaceLeftOnDevice(readInputLines(7)).part2())
+            .isEqualTo(6999588)
     }
 }

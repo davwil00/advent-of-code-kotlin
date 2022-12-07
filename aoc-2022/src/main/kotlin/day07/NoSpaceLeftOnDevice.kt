@@ -10,33 +10,33 @@ class NoSpaceLeftOnDevice(private val input: List<String>) {
     }
 
     private fun parseInput(): Folder {
-        val iterator = input.drop(1).iterator()
         val rootFolder = Folder(null, "/")
         var currentFolder = rootFolder
-        while(iterator.hasNext()) {
-            val current = iterator.next()
+        input.drop(1).forEach { inputLine ->
             when {
-                current.startsWith("$") -> {
-                    val args = current.split(" ")
-                    if (args[1] == "cd") {
-                        currentFolder = if (args[2] == "..") {
-                            currentFolder.parent!!
-                        } else {
-                            val newFolder = Folder(currentFolder, args[2])
-                            currentFolder.contents.add(newFolder)
-                            newFolder
-                        }
-                    }
+                inputLine.startsWith("$ cd") -> {
+                    currentFolder = parseCommand(inputLine, currentFolder)
                 }
-                current.startsWith("dir") -> continue
+                inputLine.startsWith("dir") || inputLine.startsWith("$ ls") -> {}
                 else -> {
-                    val (size, name) = current.split(" ")
+                    val (size, name) = inputLine.split(" ")
                     currentFolder.contents.add(File(name, size.toLong()))
                 }
             }
         }
 
         return rootFolder
+    }
+
+    private fun parseCommand(inputLine: String, currentFolder: Folder): Folder {
+        val (_, _, dir) = inputLine.split(" ")
+        return if (dir == "..") {
+            currentFolder.parent!!
+        } else {
+            Folder(currentFolder, dir).also {
+                currentFolder.contents.add(it)
+            }
+        }
     }
 
     fun part1(): Long {
@@ -76,13 +76,11 @@ class NoSpaceLeftOnDevice(private val input: List<String>) {
     data class Folder(val parent: Folder?, val name: String, val contents: MutableList<Item> = mutableListOf()): Item {
         override fun size() = contents.sumOf { it.size() }
         fun folders() = contents.filterIsInstance<Folder>()
-        fun files() = contents.filterIsInstance<File>()
     }
     data class File(val name: String, val size: Long): Item {
         override fun size() = size
     }
 }
-
 fun main() {
     val noSpaceLeftOnDevice = NoSpaceLeftOnDevice(readInputLines(7))
     println(noSpaceLeftOnDevice.part1())
