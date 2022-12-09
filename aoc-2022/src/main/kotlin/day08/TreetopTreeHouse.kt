@@ -15,37 +15,32 @@ class TreetopTreeHouse(input: List<String>) {
     private val mapWidth = input.first().length
     private val mapHeight = input.size
 
-    fun part1() = treeMap.entries.count { (coordinate, height) ->
+    fun part1() = treeMap.keys.count { coordinate ->
         coordinate.x == 0 || coordinate.x == mapWidth - 1 ||
         coordinate.y == 0 || coordinate.y == mapHeight - 1 ||
-        isVisible(coordinate, height)
+        isVisible(coordinate)
     }
 
-    private fun isVisible(coordinate: Coordinate, height: Int) =
-        visibleLeft(coordinate, height) ||
-        visibleRight(coordinate, height) ||
-        visibleUp(coordinate, height) ||
-        visibleDown(coordinate, height)
+    private fun isVisible(coordinate: Coordinate) =
+        visibleLeft(coordinate) ||
+        visibleRight(coordinate) ||
+        visibleUp(coordinate) ||
+        visibleDown(coordinate)
 
-    private fun visibleLeft(coordinate: Coordinate, height: Int) =
-        (0 until coordinate.x).all { x ->
-            treeMap[Coordinate(x, coordinate.y)]!! < height
+    private fun isVisibleFromX(from: Int, to: Int, coordinate: Coordinate) =
+        (from until to).all { x ->
+            treeMap[Coordinate(x, coordinate.y)]!! < treeMap[coordinate]!!
         }
 
-    private fun visibleRight(coordinate: Coordinate, height: Int) =
-        (coordinate.x + 1 until mapWidth).all { x ->
-            treeMap[Coordinate(x, coordinate.y)]!! < height
+    private fun isVisibleFromY(from: Int, to: Int, coordinate: Coordinate) =
+        (from until to).all { y ->
+            treeMap[Coordinate(coordinate.x, y)]!! < treeMap[coordinate]!!
         }
 
-    private fun visibleUp(coordinate: Coordinate, height: Int) =
-        (0 until coordinate.y).all { y ->
-            treeMap[Coordinate(coordinate.x, y)]!! < height
-        }
-
-    private fun visibleDown(coordinate: Coordinate, height: Int) =
-        (coordinate.y + 1 until mapHeight).all { y ->
-            treeMap[Coordinate(coordinate.x, y)]!! < height
-        }
+    private fun visibleLeft(coordinate: Coordinate) = isVisibleFromX(0, coordinate.x, coordinate)
+    private fun visibleRight(coordinate: Coordinate) = isVisibleFromX(coordinate.x + 1, mapWidth, coordinate)
+    private fun visibleUp(coordinate: Coordinate) = isVisibleFromY(0, coordinate.y, coordinate)
+    private fun visibleDown(coordinate: Coordinate) = isVisibleFromY(coordinate.y + 1, mapHeight, coordinate)
 
     fun part2() = treeMap.entries.maxOfOrNull { (coordinate, height) ->
         scenicScore(coordinate, height)
