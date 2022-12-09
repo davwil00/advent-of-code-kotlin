@@ -14,31 +14,18 @@ class RopeBridge(input: List<String>) {
         Motion(Direction.valueOf(direction), amount.toInt())
     }
 
-    fun part1(): Int {
-        var headPosition = Coordinate(0, 0)
-        var tailPosition = headPosition
-        val tailPositions = mutableSetOf<Coordinate>()
-        motions.forEach { motion ->
-            repeat(motion.amount) {
-                headPosition += motion.direction.movementDelta
-                tailPosition = calculateTailPosition(tailPosition, headPosition)
-                tailPositions += tailPosition
-            }
-        }
+    fun part1() = runSimulation(2)
+    fun part2() = runSimulation(10)
 
-        return tailPositions.size
-    }
-
-    fun part2(): Int {
-        val positions = MutableList(10) { Coordinate(0, 0) }
-        val tailPositions = mutableSetOf<Coordinate>()
-        motions.forEach { motion ->
-            repeat(motion.amount) {
+    private fun runSimulation(numberOfKnots: Int): Int {
+        val positions = MutableList(numberOfKnots) { Coordinate(0, 0) }
+        val tailPositions = motions.flatMap { motion ->
+            (0 until motion.amount).map {
                 positions[0] = positions.first() + motion.direction.movementDelta
                 updateOtherKnotPositions(positions)
-                tailPositions += positions.last()
+                positions.last()
             }
-        }
+        }.toSet()
 
         return tailPositions.size
     }
@@ -52,29 +39,17 @@ class RopeBridge(input: List<String>) {
     }
 
     private fun calculateTailPosition(currentPosition: Coordinate, headPosition: Coordinate): Coordinate {
-        return when {
-            currentPosition == headPosition || currentPosition isAdjacentTo headPosition -> currentPosition
-            currentPosition.x == headPosition.x -> {
-                if (currentPosition isAbove headPosition) {
-                    currentPosition + D.movementDelta
-                }
-                else {
-                    currentPosition + U.movementDelta
-                }
-            }
-            currentPosition.y == headPosition.y -> {
-                if (currentPosition isLeftOf headPosition) {
-                    currentPosition + R.movementDelta
-                } else {
-                    currentPosition + L.movementDelta
-                }
-            }
-            headPosition isAbove currentPosition && headPosition isLeftOf currentPosition -> currentPosition + U.movementDelta + L.movementDelta
-            headPosition isAbove currentPosition && headPosition isRightOf currentPosition -> currentPosition + U.movementDelta + R.movementDelta
-            headPosition isBelow currentPosition && headPosition isLeftOf currentPosition -> currentPosition + D.movementDelta + L.movementDelta
-            headPosition isBelow currentPosition && headPosition isRightOf currentPosition -> currentPosition + D.movementDelta + R.movementDelta
+        val delta = when {
+            currentPosition == headPosition || currentPosition isAdjacentTo headPosition -> Coordinate(0, 0)
+            currentPosition.x == headPosition.x -> if (currentPosition isAbove headPosition) D.movementDelta else U.movementDelta
+            currentPosition.y == headPosition.y -> if (currentPosition isLeftOf headPosition) R.movementDelta else L.movementDelta
+            headPosition isAbove currentPosition && headPosition isLeftOf currentPosition -> U.movementDelta + L.movementDelta
+            headPosition isAbove currentPosition && headPosition isRightOf currentPosition -> U.movementDelta + R.movementDelta
+            headPosition isBelow currentPosition && headPosition isLeftOf currentPosition -> D.movementDelta + L.movementDelta
+            headPosition isBelow currentPosition && headPosition isRightOf currentPosition -> D.movementDelta + R.movementDelta
             else -> throw IllegalStateException("Unable to determine tail position")
         }
+        return currentPosition + delta
     }
 
     data class Motion(val direction: Direction, val amount: Int)
