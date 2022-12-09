@@ -2,6 +2,7 @@ package day09
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import utils.readInputLines
 
 class RopeBridgeTest {
     private val testInput = """
@@ -24,14 +25,37 @@ class RopeBridgeTest {
     }
 
     @Test
+    fun `should count number of unique tail positions for 9th knot`() {
+        assertThat(testSubject.part2())
+            .isEqualTo(1)
+    }
+
+    @Test
+    fun `should count number of unique tail positions for 9th knot - larger example`() {
+        val largerExample = """
+            R 5
+            U 8
+            L 8
+            D 3
+            R 17
+            D 10
+            L 25
+            U 20
+        """.trimIndent()
+        val ropeBridge = RopeBridge(largerExample.lines())
+        assertThat(ropeBridge.part2())
+            .isEqualTo(36)
+    }
+
+    @Test
     fun `should get correct answer for part 1`() {
-        // assertThat(RopeBridge(readInputLines(9)).part1())
-        //    .isEqualTo()
+         assertThat(RopeBridge(readInputLines(9)).part1())
+            .isEqualTo(6190)
     }
 
     @Test
     fun `should get correct answer for part 2`() {
-        // assertThat(RopeBridge(readInputLines(9)).part2())
-        //    .isEqualTo()
+         assertThat(RopeBridge(readInputLines(9)).part2())
+            .isEqualTo(2516)
     }
 }

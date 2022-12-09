@@ -29,6 +29,28 @@ class RopeBridge(input: List<String>) {
         return tailPositions.size
     }
 
+    fun part2(): Int {
+        val positions = MutableList(10) { Coordinate(0, 0) }
+        val tailPositions = mutableSetOf<Coordinate>()
+        motions.forEach { motion ->
+            repeat(motion.amount) {
+                positions[0] = positions.first() + motion.direction.movementDelta
+                updateOtherKnotPositions(positions)
+                tailPositions += positions.last()
+            }
+        }
+
+        return tailPositions.size
+    }
+
+    private fun updateOtherKnotPositions(positions: MutableList<Coordinate>) {
+        (0 until positions.size)
+            .windowed(2)
+            .forEach { (idx1, idx2) ->
+                positions[idx2] = calculateTailPosition(positions[idx2], positions[idx1])
+            }
+    }
+
     private fun calculateTailPosition(currentPosition: Coordinate, headPosition: Coordinate): Coordinate {
         return when {
             currentPosition == headPosition || currentPosition isAdjacentTo headPosition -> currentPosition
@@ -67,5 +89,5 @@ class RopeBridge(input: List<String>) {
 fun main() {
     val ropeBridge = RopeBridge(readInputLines(9))
     println(ropeBridge.part1())
-    //println(ropeBridge.part2())
+    println(ropeBridge.part2())
 }
