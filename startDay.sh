@@ -24,11 +24,11 @@ class %s(input: List<String>) {
 }
 
 fun main() {
-    val %s = %s(readInputLines(%d))
+    val %s = %s(readInputLines(%s))
     //println(%s.part1())
     //println(%s.part2())
 }
-" "$day" "$name" "${name,}" "$name" "$day" "${name,}" "${name,}" > "aoc-${year}/src/main/kotlin/day$day/$name.kt"
+" "$day" "$name" "${name,}" "$name" "$inputDay" "${name,}" "${name,}" > "aoc-${year}/src/main/kotlin/day$day/$name.kt"
 printf "package day%s
 
 import org.assertj.core.api.Assertions.assertThat

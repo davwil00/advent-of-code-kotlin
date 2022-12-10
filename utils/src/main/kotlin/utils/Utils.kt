@@ -15,3 +15,7 @@ fun readInputLines(day: Int, fileName: String = "input.txt") : List<String> {
 fun readSingleInputLineOfIntsFromCsv(day: Int, fileName: String = "input.txt"): List<Int> {
     return readInput(day, fileName).split(",").map { it.toInt() }
 }
+
+fun printBlock() {
+    print('\u2593')
+}
