@@ -1,4 +1,4 @@
-package dayinputDay
+package day10
 
 import utils.printBlock
 import utils.readInputLines
