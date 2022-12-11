@@ -4,7 +4,7 @@ year=$(date +'%Y')
 echo 'Enter day: '
 read -r inputDay
 if [[ ${#inputDay} -eq 2 ]]; then
-  day=inputDay
+  day="$inputDay"
 else
   day="0${inputDay}"
 fi
