@@ -27,6 +27,8 @@ data class Coordinate(val x: Int, val y: Int) {
     infix fun isLeftOf(coordinate: Coordinate) = this.x < coordinate.x
     infix fun isRightOf(coordinate: Coordinate) = this.x > coordinate.x
     infix fun isAdjacentTo(coordinate: Coordinate) = abs(this.x - coordinate.x) <= 1 && abs(this.y - coordinate.y) <=1 && this != coordinate
+
+    fun manhattanDistanceTo(other: Coordinate) = abs(x - other.x) + abs(y - other.y)
 }
 
 data class Coordinate3D(val x: Int, val y: Int, val z: Int) {
