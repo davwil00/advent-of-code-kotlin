@@ -32,8 +32,8 @@ class RegolithReservoir(private val input: List<String>) {
 
     fun part1(): Int {
         val map = initMap()
-        val minX = map.keys.minByOrNull { it.x }!!.x
-        val maxX = map.keys.maxByOrNull { it.x }!!.x
+        val minX = map.keys.minOfOrNull { it.x }!!
+        val maxX = map.keys.maxOfOrNull { it.x }!!
 
         fun inAbyss(coordinate: Coordinate) = coordinate.x < minX || coordinate.x > maxX
 
@@ -62,7 +62,7 @@ class RegolithReservoir(private val input: List<String>) {
 
     fun part2(): Int {
         val map = initMap()
-        val maxY = map.keys.maxByOrNull { it.y }!!.y + 2
+        val maxY = map.keys.maxOfOrNull { it.y }!! + 2
         var sand: Coordinate
 
         fun Coordinate.fallToFloor(maxY: Int): Coordinate {
