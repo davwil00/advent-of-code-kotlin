@@ -21,6 +21,7 @@ data class Coordinate(val x: Int, val y: Int) {
     ).filter { it.x >= minX && it.y >= minY } + getAdjacentCoordinates(minX, minY)
 
     operator fun plus(coordinate: Coordinate): Coordinate = Coordinate(x + coordinate.x, y + coordinate.y)
+    operator fun minus(coordinate: Coordinate): Coordinate = Coordinate(x - coordinate.x, y - coordinate.y)
     operator fun times(amount: Int): Coordinate = Coordinate(x * amount, y * amount)
     infix fun isAbove(coordinate: Coordinate) = this.y < coordinate.y
     infix fun isBelow(coordinate: Coordinate) = this.y > coordinate.y
