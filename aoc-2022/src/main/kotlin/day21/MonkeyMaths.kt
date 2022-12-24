@@ -30,16 +30,6 @@ class MonkeyMaths(input: List<String>) {
         }
     }
 
-    fun part2Test(): Boolean {
-        val clone = monkeys.toMutableMap()
-        val humnValue = part2()
-        clone["humn"] = NumberMonkey("humn", humnValue)
-        val root = clone.getValue("root") as OperationMonkey
-        val m1 = resolveMonkey2(clone.getValue(root.monkey1), clone)
-        val m2 = resolveMonkey2(clone.getValue(root.monkey2), clone)
-        return m1 == m2
-    }
-
     private fun resolveMonkey(monkey: Monkey): Long {
         if (monkey is NumberMonkey) {
             return monkey.number
@@ -47,16 +37,6 @@ class MonkeyMaths(input: List<String>) {
         monkey as OperationMonkey
         val monkey1 = resolveMonkey(monkeys.getValue(monkey.monkey1))
         val monkey2 = resolveMonkey(monkeys.getValue(monkey.monkey2))
-        return monkey.operation.function(monkey1, monkey2)
-    }
-
-    private fun resolveMonkey2(monkey: Monkey, monkeys: Map<String, Monkey>): Long {
-        if (monkey is NumberMonkey) {
-            return monkey.number
-        }
-        monkey as OperationMonkey
-        val monkey1 = resolveMonkey2(monkeys.getValue(monkey.monkey1), monkeys)
-        val monkey2 = resolveMonkey2(monkeys.getValue(monkey.monkey2), monkeys)
         return monkey.operation.function(monkey1, monkey2)
     }
 
@@ -72,19 +52,19 @@ class MonkeyMaths(input: List<String>) {
     }
 
     private fun solveHumn(target: Long, monkey: OperationMonkey): Long {
-        val (monkey1, monkey2) = monkey
-        if (monkey1 == "humn") {
-            return reverseEquation(target, resolveMonkey(monkeys.getValue(monkey2)), monkey.operation, false)
-        }
-        else if (monkey2 == "humn") {
-            return reverseEquation(target, resolveMonkey(monkeys.getValue(monkey1)), monkey.operation, true)
-        }
-        return if (scanForHumn(monkeys.getValue(monkey1))) {
-            val newTarget = reverseEquation(target, resolveMonkey(monkeys.getValue(monkey2)), monkey.operation, false)
-            solveHumn(newTarget, monkeys.getValue(monkey1) as OperationMonkey)
-        } else {
-            val newTarget = reverseEquation(target, resolveMonkey(monkeys.getValue(monkey1)), monkey.operation, true)
-            solveHumn(newTarget, monkeys.getValue(monkey2) as OperationMonkey)
+        val monkey1 = monkeys.getValue(monkey.monkey1)
+        val monkey2 = monkeys.getValue(monkey.monkey2)
+        return when {
+            monkey1.isHumn() -> reverseEquation(target, resolveMonkey(monkey2), monkey.operation, false)
+            monkey2.isHumn() -> reverseEquation(target, resolveMonkey(monkey1), monkey.operation, true)
+            scanForHumn(monkey1) -> {
+                val newTarget = reverseEquation(target, resolveMonkey(monkey2), monkey.operation, false)
+                solveHumn(newTarget, monkey1 as OperationMonkey)
+            }
+            else -> {
+                val newTarget = reverseEquation(target, resolveMonkey(monkey1), monkey.operation, true)
+                solveHumn(newTarget, monkey2 as OperationMonkey)
+            }
         }
     }
 
@@ -117,9 +97,6 @@ class MonkeyMaths(input: List<String>) {
                 return OperationMonkey(name, monkey1, monkey2, operation)
             }
         }
-
-        operator fun component1() = monkey1
-        operator fun component2() = monkey2
     }
 
     enum class Operation(val symbol: String, val function: (Long, Long) -> Long, val oppositeFunction: (Long, Long) -> Long) {

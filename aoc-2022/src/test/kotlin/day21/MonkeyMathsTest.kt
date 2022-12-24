@@ -37,12 +37,6 @@ class MonkeyMathsTest {
     }
 
     @Test
-    fun checkPt2() {
-        assertThat(MonkeyMaths(readInputLines(21)).part2Test())
-            .isEqualTo(true)
-    }
-
-    @Test
     fun `should get correct answer for part 1`() {
          assertThat(MonkeyMaths(readInputLines(21)).part1())
             .isEqualTo(78342931359552)
