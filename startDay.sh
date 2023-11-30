@@ -10,6 +10,7 @@ else
 fi
 echo 'Enter name: '
 read -r name
+lowerName=$(echo "${name}" | tr "[:upper:]" "[:lower:]")
 
 mkdir "aoc-${year}/src/main/kotlin/day$day"
 mkdir "aoc-${year}/src/test/kotlin/day$day"
@@ -28,7 +29,7 @@ fun main() {
     //println(%s.part1())
     //println(%s.part2())
 }
-" "$day" "$name" "${name,}" "$name" "$inputDay" "${name,}" "${name,}" > "aoc-${year}/src/main/kotlin/day$day/$name.kt"
+" "$day" "$name" "$lowerName" "$name" "$inputDay" "${lowerName}" "${lowerName}" > "aoc-${year}/src/main/kotlin/day$day/$name.kt"
 printf "package day%s
 
 import org.assertj.core.api.Assertions.assertThat

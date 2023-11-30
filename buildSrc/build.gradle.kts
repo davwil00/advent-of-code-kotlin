@@ -9,8 +9,8 @@ repositories {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.21")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:1.6.0")
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.21")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:1.9.21")
 }
 
 tasks.test {
