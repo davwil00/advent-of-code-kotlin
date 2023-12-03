@@ -16,6 +16,14 @@ fun readSingleInputLineOfIntsFromCsv(day: Int, fileName: String = "input.txt"): 
     return readInput(day, fileName).split(",").map { it.toInt() }
 }
 
+fun readGrid(input: List<String>) = input.flatMapIndexed { rowIdx, line ->
+    line.splitToString()
+        .withIndex()
+        .associate { (colIdx, value) ->
+            Pair(Coordinate(colIdx, rowIdx), value)
+        }.entries
+}.associate { it.key to it.value }
+
 fun printBlock() {
     print('\u2593')
 }
