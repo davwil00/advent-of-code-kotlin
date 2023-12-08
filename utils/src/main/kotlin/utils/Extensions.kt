@@ -23,3 +23,12 @@ fun <T, U> Grouping<T, U>.eachCountToLong() = this.fold(0L) { acc, _ -> acc + 1 
 fun Int.isEven() = this % 2 == 0
 
 fun Char.asInt() = this.toString().toInt()
+
+
+// @link https://en.wikipedia.org/wiki/Euclidean_algorithm#Implementations
+private tailrec fun gcd(a: Long, b: Long): Long = if (b == 0L) a else gcd(b, a % b)
+
+// @link https://github.com/nickleefly/node-lcm/blob/5d44997/index.js
+private fun lcm(a: Long, b: Long) = if (b == 0L) 0 else (a * b) / gcd(a, b)
+
+fun List<Long>.lcm() = reduce { a, b -> lcm(a, b) }
