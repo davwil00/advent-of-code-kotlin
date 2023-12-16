@@ -27,3 +27,9 @@ fun readGrid(input: List<String>) = input.flatMapIndexed { rowIdx, line ->
 fun printBlock() {
     print('\u2593')
 }
+
+fun <T> generateCombinations(list: List<T>): List<Pair<T, T>> {
+    return list.flatMapIndexed { i, first ->
+        list.subList(i + 1, list.size).map { second -> Pair(first, second) }
+    }
+}
