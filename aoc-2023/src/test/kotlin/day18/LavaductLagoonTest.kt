@@ -2,6 +2,7 @@ package day18
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import utils.readInputLines
 
 class LavaductLagoonTest {
     private val testInput = """R 6 (#70c710)
@@ -27,14 +28,19 @@ U 2 (#7a21e3)""".lines()
     }
 
     @Test
+    fun `should find total amount of lava when reading hex instructions`() {
+        assertThat(testSubject.part2()).isEqualTo(952408144115)
+    }
+
+    @Test
     fun `should get correct answer for part 1`() {
-        // assertThat(LavaductLagoon(readInputLines(18)).part1())
-        //    .isEqualTo()
+         assertThat(LavaductLagoon(readInputLines(18)).part1())
+            .isEqualTo(46334)
     }
 
     @Test
     fun `should get correct answer for part 2`() {
-        // assertThat(LavaductLagoon(readInputLines(18)).part2())
-        //    .isEqualTo()
+         assertThat(LavaductLagoon(readInputLines(18)).part2())
+            .isEqualTo(102000662718092)
     }
 }

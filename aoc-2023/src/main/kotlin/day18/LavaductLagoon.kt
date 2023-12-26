@@ -1,101 +1,81 @@
 package day18
 
 import utils.Coordinate
-import utils.printBlock
 import utils.readInputLines
-import kotlin.math.max
+import kotlin.math.abs
 
-class LavaductLagoon(input: List<String>) {
-
-    private val instructions = parseInstructions(input)
+class LavaductLagoon(private val input: List<String>) {
 
     fun part1(): Int {
-        val map = createLavaMap()
-//
-//        val minX = map.minOf { it.x } - 1
-//        val maxX = map.maxOf { it.x } + 1
-//        val minY = map.minOf { it.y } - 1
-//        val maxY = map.maxOf { it.y } + 1
-        return floodFill(map, Coordinate(map.first()))
+        val instructions = input.map { Instruction.fromString(it) }
+        return shoelaceFormula(instructions).toInt()
+    }
 
-//        val nonMapCount = traverseMap(Pair(Coordinate(minX, minY), Coordinate(maxX, maxY)), setOf(Coordinate(minX, minY)), map)
-//        return ((maxY - minY) * (maxX - minX)) - nonMapCount
-//
-//        var totalDug = 0
-//// left block must not be in the map and must be a stopper block at some point?
-//        (minY..maxY).forEach { y ->
-//            var digging = false
-//            (minX..maxX).forEach { x ->
-//                if (Coordinate(x, y) in map) {
-//                    totalDug++
-//                    printBlock()
-//                    val direction = map.getValue(Coordinate(x, y))
-//                    if (direction == Direction.U) {
-//                        digging = true
-//                    } else if (direction == Direction.D) {
-//                        digging = false
-//                    }
-//                } else if (digging) {
-//                    print("#")
-//                    totalDug++
-//                } else {
-//                    print(".")
-//                }
-//            }
-//            println()
-//        }
-//
-//        return to
+    fun part2(): Long {
+        val instructions = input.map { Instruction.fromString(it, true) }
+        return shoelaceFormula(instructions).toLong()
     }
 
     /**
-     * Start by filling the current scanline from one end to the other
-     * While filling the current scanline, test for the ends of spans above and below
-     * For each new free span, plant a seed
-     * Repeat until there are no more seeds
+     * Calculate the area with the shoelace formula
+     * https://www.themathdoctors.org/polygon-coordinates-and-areas/
+     *
+     * Add half the perimeter (+1)
      */
-    private fun floodFill(map: Set<Coordinate>, coordinatesToVisit: Set<Coordinate>, coordinatesVisited: Set<Coordinate>): Int {
-        if (coordinatesToVisit.isEmpty()) {
-            return coordinatesVisited.size
-        }
-
-        val currentCoordinate = coordinatesToVisit.first()
-        // scan left and right until find a thing in the map
-        // find the leftmost thing in the map
-        val minX = map.maxBy { it.x < currentCoordinate.x }.x
-        val maxX = map.minBy { it.x > currentCoordinate.x }.x
-        (minX .. maxX).map {
-            Coordinate(it, currentCoordinate.y)
-        }
-        floodFill()
-    }
-
-    private fun createLavaMapWithDirection(): Map<Coordinate, Direction> {
-        val map = instructions.fold(Pair(setOf<Pair<Coordinate, Direction>>(), Coordinate(0, 0))) { acc, curr ->
-            val newBorders = (0..curr.amount).map {
-                (acc.second + curr.direction.coordinateDiff * it) to curr.direction
-            }
-            Pair(acc.first + newBorders, newBorders.last().first)
-        }.first.associate { it }
-        return map
-    }
-
-    private fun createLavaMap(): Set<Coordinate> {
-        return instructions.fold(listOf(Coordinate(0, 0))) { acc, curr ->
-            acc + (0..curr.amount).map {
-                (acc.last() + curr.direction.coordinateDiff * it)
-            }
+    private fun shoelaceFormula(instructions: List<Instruction>): Double {
+        // find the coordinates of the corners
+        val vertices = instructions.fold(listOf(Coordinate(0, 0))) { acc, curr ->
+            acc + (acc.last() + curr.direction.coordinateDiff * curr.amount)
         }.toSet()
+
+        // S1 = x1*y2 + x2*y3 + x3*y1
+        val s1 =  vertices.windowed(2, partialWindows = true).sumOf { pair ->
+            if (pair.size == 1) {
+                (pair.first().x.toLong() * vertices.first().y.toLong())
+            } else {
+                (pair.first().x.toLong() * pair.last().y.toLong())
+            }
+        }
+
+        // S2 = y1*x2 + y2*x3 + y3*x1
+        val s2 = vertices.windowed(2, partialWindows = true).sumOf { pair ->
+            if (pair.size == 1) {
+                (pair.first().y.toLong() * vertices.first().x.toLong())
+            } else {
+                (pair.first().y.toLong() * pair.last().x.toLong())
+            }
+        }
+
+        // A = 1/2 * |S1 - S2|
+        val area = 0.5 * abs(s1 - s2)
+        val perimeterLength = calculatePerimeter(instructions)
+        return area + (perimeterLength / 2) + 1
     }
 
-    private fun parseInstructions(input: List<String>): List<Instruction> {
-        return input.map { line ->
-            val (directionChar, amount, colour) = line.split(" ")
-            Instruction(Direction.valueOf(directionChar), amount.toInt(), colour.substring(1, colour.length - 2))
+    private fun calculatePerimeter(instructions: List<Instruction>): Long {
+        return instructions.sumOf { it.amount.toLong() }
+    }
+
+    data class Instruction(val direction: Direction, val amount: Int) {
+        companion object {
+            fun fromString(string: String, useColour: Boolean = false): Instruction {
+                val (directionChar, amount, colour) = string.split(" ")
+                return if (useColour) {
+                    val colourAmount = colour.substring(2, 7).toInt(16)
+                    val direction = when(colour[7]) {
+                        '0' -> Direction.R
+                        '1' -> Direction.D
+                        '2' -> Direction.L
+                        '3' -> Direction.U
+                        else -> throw IllegalArgumentException("Unknown direction ${colour[7]}")
+                    }
+                    Instruction(direction, colourAmount)
+                } else {
+                    Instruction(Direction.valueOf(directionChar), amount.toInt())
+                }
+            }
         }
     }
-
-    data class Instruction(val direction: Direction, val amount: Int, val colour: String)
 
     enum class Direction(val coordinateDiff: Coordinate) {
         U(Coordinate(0, -1)),
@@ -107,6 +87,6 @@ class LavaductLagoon(input: List<String>) {
 
 fun main() {
     val lavaductLagoon = LavaductLagoon(readInputLines(18))
-    println(lavaductLagoon.part1()) // 47767 too high
-    //println(lavaductlagoon.part2())
+    println(lavaductLagoon.part1())
+    println(lavaductLagoon.part2())
 }
